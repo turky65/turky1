@@ -13,64 +13,10 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
+            background: linear-gradient(135deg, #1e1e1e, #3a3a3a), url('') no-repeat center center fixed;
+            background-size: cover;
             color: #fff;
-        }
-
-        .terms-container {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 40px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
-            animation: fadeIn 1.5s ease-out;
-        }
-
-        h1 {
-            color: #007BFF;
-            font-size: 28px;
-            margin-bottom: 20px;
-            animation: textGlow 1.5s infinite alternate;
-        }
-
-        @keyframes textGlow {
-            0% {
-                color: #007BFF;
-            }
-            100% {
-                color: #fff;
-                text-shadow: 0 0 15px #007BFF, 0 0 30px #007BFF;
-            }
-        }
-
-        .terms {
-            margin: 20px 0;
-            text-align: justify;
-            font-size: 16px;
-            line-height: 1.6;
-        }
-
-        .terms input {
-            margin: 20px 0;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .btn {
-            background: #007BFF;
-            color: #fff;
-            border: none;
-            padding: 12px 30px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-
-        .btn:hover {
-            background: #0056b3;
+            overflow: hidden;
         }
 
         .container {
@@ -79,10 +25,10 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
             padding: 40px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px; /* الحجم الأقصى في الشاشات الكبيرة */
             text-align: center;
-            display: none;
-            animation: fadeIn 1.5s ease-out;
+            opacity: 0;
+            animation: fadeInContainer 1.5s forwards;
         }
 
         input, button {
@@ -98,14 +44,14 @@
         }
 
         button {
-            background: #007BFF;
+            background: #daa105;
             color: #fff;
             border: none;
             cursor: pointer;
         }
 
         button:hover {
-            background: #0056b3;
+            background: #daa105;
         }
 
         #copyButton {
@@ -117,15 +63,25 @@
             border-radius: 8px;
             cursor: pointer;
             margin-top: 15px;
-            transition: background 0.3s ease;
-            display: none;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            transform: scale(0);
+            animation: fadeInButton 0.7s 1.3s forwards;
         }
 
         #copyButton:hover {
             background: #218838;
+            transform: scale(1.1);
         }
 
-        @keyframes fadeIn {
+        #results {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInResults 1s 0.5s forwards;
+            display: none;
+        }
+
+        @keyframes fadeInContainer {
             from {
                 opacity: 0;
                 transform: scale(0.9);
@@ -135,26 +91,94 @@
                 transform: scale(1);
             }
         }
+
+        @keyframes fadeInButton {
+            from {
+                opacity: 0;
+                transform: scale(0);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInResults {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #fff;
+            display: none;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* استعلامات الوسائط لتناسب الشاشات الصغيرة */
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+                justify-content: flex-start;
+            }
+
+            .container {
+                padding: 20px;
+                max-width: 90%;
+                width: 100%;
+            }
+
+            input, button {
+                font-size: 14px;
+                padding: 12px;
+            }
+
+            #copyButton {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+
+        /* استعلامات الوسائط للأجهزة المحمولة الصغيرة */
+        @media screen and (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            input, button {
+                font-size: 12px;
+                padding: 10px;
+            }
+
+            #copyButton {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="terms-container" id="termsContainer">
-        <h1>⚖️ شروط الاستخدام</h1>
-        <div class="terms">
-            <p>مرحباً بك في موقع إدارة الرواتب. قبل أن تتمكن من استخدام هذا الموقع، يجب أن توافق على الشروط التالية:</p>
-            <ul>
-                <li>يجب عدم استخدام هذا الموقع لأغراض غير قانونية.</li>
-                <li>يجب الالتزام بالسياسات التي تم وضعها من قبل الشركة.</li>
-                <li>يمنع منعاً باتاً استخدام الموقع في التلاعب أو نشر أي معلومات مغلوطة.</li>
-            </ul>
-            <p>يرجى قراءة الشروط بعناية. إذا كنت توافق عليها، اضغط على "موافق" للمتابعة.</p>
-        </div>
-        <input type="checkbox" id="acceptTerms"> أوافق على الشروط والأحكام
-        <br>
-        <input type="password" id="password" placeholder="🔑 أدخل كلمة المرور" required>
-        <button class="btn" id="agreeButton" disabled>موافق</button>
-    </div>
+    <div class="loading" id="loadingMessage">جاري تحميل البيانات...</div>
 
     <div class="container" id="mainContainer">
         <h1>💼 إدارة الرواتب</h1>
@@ -170,59 +194,17 @@
     </div>
 
     <script>
-        const termsContainer = document.getElementById('termsContainer');
         const mainContainer = document.getElementById('mainContainer');
-        const agreeButton = document.getElementById('agreeButton');
-        const acceptTerms = document.getElementById('acceptTerms');
-        const passwordInput = document.getElementById('password');
         const searchForm = document.getElementById('searchForm');
         const results = document.getElementById('results');
         const copyButton = document.getElementById('copyButton');
+        const loadingMessage = document.getElementById('loadingMessage');
     
-        // إضافة التحقق من كلمة المرور عندما يتم تغيير القيمة
-        acceptTerms.addEventListener('change', async () => {
-            const password = passwordInput.value;
-            const isPasswordCorrect = await checkPassword(password);
-            agreeButton.disabled = !(acceptTerms.checked && isPasswordCorrect);
-        });
-    
-        passwordInput.addEventListener('input', async () => {
-            const password = passwordInput.value;
-            const isPasswordCorrect = await checkPassword(password);
-            agreeButton.disabled = !(acceptTerms.checked && isPasswordCorrect);
-        });
-    
-        // التحقق من كلمة المرور عبر الخادم
-        async function checkPassword(password) {
-            const response = await fetch('/check-password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ password })
-            });
-            const data = await response.json();
-            return data.authorized;
-        }
-    
-        // عند النقر على "موافق"، التحقق من كلمة المرور قبل الانتقال
-        agreeButton.addEventListener('click', async () => {
-            const password = passwordInput.value;
-            const isPasswordCorrect = await checkPassword(password);
-            
-            if (!isPasswordCorrect) {
-                alert('⚠️ كلمة المرور غير صحيحة');
-                return;
-            }
-            termsContainer.style.display = 'none';
-            mainContainer.style.display = 'block';
-        });
-    
-        // التعامل مع إرسال استمارة البحث
         searchForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             results.style.display = 'none';
             copyButton.style.display = 'none';
+            loadingMessage.style.display = 'block';
             const employeeId = document.getElementById('employeeId').value;
             const decimalRemoval = document.getElementById('decimalRemoval').checked;
     
@@ -234,24 +216,27 @@
     
                 const data = await response.text();
                 results.style.display = 'block';
-                results.innerHTML = `<div>${data}</div>`;
-                copyButton.style.display = 'inline-block';
+                results.innerHTML = data;
+                copyButton.style.display = 'block';
             } catch (error) {
                 results.style.display = 'block';
-                results.innerHTML = `<p style="color: red;">⚠️ حدث خطأ أثناء البحث: ${error.message}</p>`;
+                results.innerHTML = '⚠️ حدث خطأ أثناء جلب البيانات';
+            } finally {
+                loadingMessage.style.display = 'none';
             }
         });
     
-        // التعامل مع زر نسخ البيانات
         copyButton.addEventListener('click', () => {
-            const textToCopy = results.textContent || results.innerText;
+            const textToCopy = results.textContent.trim();
             navigator.clipboard.writeText(textToCopy)
                 .then(() => {
-                    alert('✅ تم نسخ المعلومات بنجاح!');
+                    alert('📋 تم نسخ المعلومات');
                 })
-                .catch((err) => {
-                    alert('⚠️ حدث خطأ أثناء النسخ: ' + err);
+                .catch(() => {
+                    alert('⚠️ فشل في نسخ المعلومات');
                 });
         });
     </script>
-    
+
+</body>
+</html>
