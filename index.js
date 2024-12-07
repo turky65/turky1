@@ -44,18 +44,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// تحقق من كلمة المرور
-app.post('/check-password', (req, res) => {
-    const password = req.body.password;  // التأكد من استخدام body-parser middleware
-    const correctPassword = '2468';  // هنا ضع كلمة المرور التي تريدها
-
-    if (password === correctPassword) {
-        res.send({ authorized: true });
-    } else {
-        res.send({ authorized: false });
-    }
-});
-
 // البحث عن الموظف باستخدام ID
 app.get('/search', (req, res) => {
     const { id } = req.query;
