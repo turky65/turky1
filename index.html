@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة الرواتب</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
+            color: #fff;
+        }
+
+        .terms-container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        h1 {
+            color: #007BFF;
+            font-size: 28px;
+            margin-bottom: 20px;
+            animation: textGlow 1.5s infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% {
+                color: #007BFF;
+            }
+            100% {
+                color: #fff;
+                text-shadow: 0 0 15px #007BFF, 0 0 30px #007BFF;
+            }
+        }
+
+        .terms {
+            margin: 20px 0;
+            text-align: justify;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .terms input {
+            margin: 20px 0;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .btn {
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #0056b3;
+        }
+
+        .container {
+            background: #111;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        input, button {
+            width: calc(100% - 20px);
+            margin: 15px auto;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            transition: all 0.3s ease;
+            background-color: #222;
+            color: #fff;
+        }
+
+        button {
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #copyButton {
+            background: #28a745;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s ease;
+            display: none;
+        }
+
+        #copyButton:hover {
+            background: #218838;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="terms-container" id="termsContainer">
+        <h1>⚖️ شروط الاستخدام</h1>
+        <div class="terms">
+            <p>مرحباً بك في موقع إدارة الرواتب. قبل أن تتمكن من استخدام هذا الموقع، يجب أن توافق على الشروط التالية:</p>
+            <ul>
+                <li>يجب عدم استخدام هذا الموقع لأغراض غير قانونية.</li>
+                <li>يجب الالتزام بالسياسات التي تم وضعها من قبل الشركة.</li>
+                <li>يمنع منعاً باتاً استخدام الموقع في التلاعب أو نشر أي معلومات مغلوطة.</li>
+            </ul>
+            <p>يرجى قراءة الشروط بعناية. إذا كنت توافق عليها، اضغط على "موافق" للمتابعة.</p>
+        </div>
+        <input type="checkbox" id="acceptTerms"> أوافق على الشروط والأحكام
+        <br>
+        <input type="password" id="password" placeholder="🔑 أدخل كلمة المرور" required>
+        <button class="btn" id="agreeButton" disabled>موافق</button>
+    </div>
+
+    <div class="container" id="mainContainer">
+        <h1>💼 إدارة الرواتب</h1>
+        <form id="searchForm">
+            <input type="text" id="employeeId" placeholder="🔍 أدخل ID الموظف" required>
+            <label>
+                <input type="checkbox" id="decimalRemoval"> إزالة الأرقام العشرية من الراتب
+            </label>
+            <button type="submit">🔍 بحث</button>
+        </form>
+        <div id="results"></div>
+        <button id="copyButton">📋 نسخ المعلومات</button>
+    </div>
+
+    <script>
+        const termsContainer = document.getElementById('termsContainer');
+        const mainContainer = document.getElementById('mainContainer');
+        const agreeButton = document.getElementById('agreeButton');
+        const acceptTerms = document.getElementById('acceptTerms');
+        const passwordInput = document.getElementById('password');
+        const searchForm = document.getElementById('searchForm');
+        const results = document.getElementById('results');
+        const copyButton = document.getElementById('copyButton');
+    
+        // إضافة التحقق من كلمة المرور عندما يتم تغيير القيمة
+        acceptTerms.addEventListener('change', async () => {
+            const password = passwordInput.value;
+            const isPasswordCorrect = await checkPassword(password);
+            agreeButton.disabled = !(acceptTerms.checked && isPasswordCorrect);
+        });
+    
+        passwordInput.addEventListener('input', async () => {
+            const password = passwordInput.value;
+            const isPasswordCorrect = await checkPassword(password);
+            agreeButton.disabled = !(acceptTerms.checked && isPasswordCorrect);
+        });
+    
+        // التحقق من كلمة المرور عبر الخادم
+        async function checkPassword(password) {
+            const response = await fetch('/check-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password })
+            });
+            const data = await response.json();
+            return data.authorized;
+        }
+    
+        // عند النقر على "موافق"، التحقق من كلمة المرور قبل الانتقال
+        agreeButton.addEventListener('click', async () => {
+            const password = passwordInput.value;
+            const isPasswordCorrect = await checkPassword(password);
+            
+            if (!isPasswordCorrect) {
+                alert('⚠️ كلمة المرور غير صحيحة');
+                return;
+            }
+            termsContainer.style.display = 'none';
+            mainContainer.style.display = 'block';
+        });
+    
+        // التعامل مع إرسال استمارة البحث
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            results.style.display = 'none';
+            copyButton.style.display = 'none';
+            const employeeId = document.getElementById('employeeId').value;
+            const decimalRemoval = document.getElementById('decimalRemoval').checked;
+    
+            try {
+                const response = await fetch(`/search?id=${employeeId}&decimal=${decimalRemoval}`);
+                if (!response.ok) {
+                    throw new Error('خطأ في جلب البيانات من السيرفر');
+                }
+    
+                const data = await response.text();
+                results.style.display = 'block';
+                results.innerHTML = `<div>${data}</div>`;
+                copyButton.style.display = 'inline-block';
+            } catch (error) {
+                results.style.display = 'block';
+                results.innerHTML = `<p style="color: red;">⚠️ حدث خطأ أثناء البحث: ${error.message}</p>`;
+            }
+        });
+    
+        // التعامل مع زر نسخ البيانات
+        copyButton.addEventListener('click', () => {
+            const textToCopy = results.textContent || results.innerText;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert('✅ تم نسخ المعلومات بنجاح!');
+                })
+                .catch((err) => {
+                    alert('⚠️ حدث خطأ أثناء النسخ: ' + err);
+                });
+        });
+    </script>
+    
